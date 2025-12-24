@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Fun Calendar</title>
+  <!-- Google Font for stylish headers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5e6ff; /* very light purple */
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 90%;
+      margin: auto;
+    }
+
+    th {
+      background-color: #ffccd9; /* light pink */
+      color: #333;
+      font-family: 'Great Vibes', cursive;
+      padding: 10px;
+      font-size: 20px;
+    }
+
+    td {
+      border: 1px solid #999;
+      padding: 5px;
+      vertical-align: top;
+      background-color: #b3e0ff; /* very light baby blue cells */
+    }
+
+    td:hover {
+      background-color: #d0f0c0; /* highlight on hover */
+    }
+
+    textarea {
+      width: 95%;
+      height: 70px;
+      font-family: Arial;
+      font-size: 14px;
+      padding: 5px;
+      border: 2px solid #b3e0ff; /* very light baby blue border */
+      border-radius: 5px;
+      resize: vertical;
+      background-color: #ffffff; /* white background */
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>My Fun Calendar</h1>
+
+<table>
+  <tr>
+    <th>Sunday</th>
+    <th>Monday</th>
+    <th>Tuesday</th>
+    <th>Wednesday</th>
+    <th>Thursday</th>
+    <th>Friday</th>
+    <th>Saturday</th>
+  </tr>
+  <tr>
+    <td><textarea id="sunday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="monday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="tuesday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="wednesday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="thursday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="friday" placeholder="Add activities"></textarea></td>
+    <td><textarea id="saturday" placeholder="Add activities"></textarea></td>
+  </tr>
+</table>
+
+<script>
+  const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+
+  // Load saved activities when page opens
+  days.forEach(day => {
+    const textarea = document.getElementById(day);
+    textarea.value = localStorage.getItem(day) || "";
+
+    // Save automatically when typing
+    textarea.addEventListener("input", () => {
+      localStorage.setItem(day, textarea.value);
+    });
+  });
+</script>
+
+</body>
+</html>
