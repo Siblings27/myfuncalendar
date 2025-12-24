@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Fun Calendar</title>
-  <!-- Google Font for stylish headers -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Fun Monthly Calendar</title>
+
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
@@ -10,49 +13,55 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f5e6ff; /* very light purple */
+      background-color: #f5e6ff;
       text-align: center;
+      padding: 20px;
     }
 
     h1 {
-      color: #333;
+      margin-bottom: 10px;
+    }
+
+    select {
+      padding: 6px;
+      font-size: 14px;
+      margin: 5px;
     }
 
     table {
       border-collapse: collapse;
-      width: 90%;
+      width: 95%;
       margin: auto;
     }
 
     th {
-      background-color: #ffccd9; /* light pink */
-      color: #333;
+      background-color: #ffccd9;
       font-family: 'Great Vibes', cursive;
-      padding: 10px;
       font-size: 20px;
+      padding: 8px;
     }
 
     td {
       border: 1px solid #999;
-      padding: 5px;
+      background-color: #b3e0ff;
       vertical-align: top;
-      background-color: #b3e0ff; /* very light baby blue cells */
+      height: 120px;
+      padding: 4px;
     }
 
-    td:hover {
-      background-color: #d0f0c0; /* highlight on hover */
+    .date {
+      font-weight: bold;
+      margin-bottom: 4px;
     }
 
     textarea {
       width: 95%;
       height: 70px;
-      font-family: Arial;
-      font-size: 14px;
-      padding: 5px;
-      border: 2px solid #b3e0ff; /* very light baby blue border */
+      font-size: 13px;
+      border: 2px solid #b3e0ff;
       border-radius: 5px;
       resize: vertical;
-      background-color: #ffffff; /* white background */
+      background-color: white;
     }
   </style>
 </head>
@@ -61,40 +70,111 @@
 
 <h1>My Fun Calendar</h1>
 
+<select id="month"></select>
+<select id="year"></select>
+
+<br><br>
+
 <table>
-  <tr>
-    <th>Sunday</th>
-    <th>Monday</th>
-    <th>Tuesday</th>
-    <th>Wednesday</th>
-    <th>Thursday</th>
-    <th>Friday</th>
-    <th>Saturday</th>
-  </tr>
-  <tr>
-    <td><textarea id="sunday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="monday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="tuesday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="wednesday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="thursday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="friday" placeholder="Add activities"></textarea></td>
-    <td><textarea id="saturday" placeholder="Add activities"></textarea></td>
-  </tr>
+  <thead>
+    <tr>
+      <th>Sun</th>
+      <th>Mon</th>
+      <th>Tue</th>
+      <th>Wed</th>
+      <th>Thu</th>
+      <th>Fri</th>
+      <th>Sat</th>
+    </tr>
+  </thead>
+  <tbody id="calendar"></tbody>
 </table>
 
 <script>
-  const days = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+  const monthSelect = document.getElementById("month");
+  const yearSelect = document.getElementById("year");
+  const calendar = document.getElementById("calendar");
 
-  // Load saved activities when page opens
-  days.forEach(day => {
-    const textarea = document.getElementById(day);
-    textarea.value = localStorage.getItem(day) || "";
+  const months = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
 
-    // Save automatically when typing
-    textarea.addEventListener("input", () => {
-      localStorage.setItem(day, textarea.value);
-    });
+  // Populate month & year dropdowns
+  months.forEach((m, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = m;
+    monthSelect.appendChild(option);
   });
+
+  for (let y = 2020; y <= 2035; y++) {
+    const option = document.createElement("option");
+    option.value = y;
+    option.textContent = y;
+    yearSelect.appendChild(option);
+  }
+
+  const today = new Date();
+  monthSelect.value = today.getMonth();
+  yearSelect.value = today.getFullYear();
+
+  function buildCalendar() {
+    calendar.innerHTML = "";
+    const month = monthSelect.value;
+    const year = yearSelect.value;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, Number(month) + 1, 0).getDate();
+
+    let row = document.createElement("tr");
+    let cellCount = 0;
+
+    // Empty cells before first day
+    for (let i = 0; i < firstDay; i++) {
+      row.appendChild(document.createElement("td"));
+      cellCount++;
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      if (cellCount === 7) {
+        calendar.appendChild(row);
+        row = document.createElement("tr");
+        cellCount = 0;
+      }
+
+      const cell = document.createElement("td");
+      const dateKey = `${year}-${month}-${day}`;
+
+      const dateLabel = document.createElement("div");
+      dateLabel.className = "date";
+      dateLabel.textContent = day;
+
+      const textarea = document.createElement("textarea");
+      textarea.value = localStorage.getItem(dateKey) || "";
+
+      textarea.addEventListener("input", () => {
+        localStorage.setItem(dateKey, textarea.value);
+      });
+
+      cell.appendChild(dateLabel);
+      cell.appendChild(textarea);
+      row.appendChild(cell);
+      cellCount++;
+    }
+
+    while (cellCount < 7) {
+      row.appendChild(document.createElement("td"));
+      cellCount++;
+    }
+
+    calendar.appendChild(row);
+  }
+
+  monthSelect.addEventListener("change", buildCalendar);
+  yearSelect.addEventListener("change", buildCalendar);
+
+  buildCalendar();
 </script>
 
 </body>
