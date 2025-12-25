@@ -1,182 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Fun Calendar</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Fun Calendar</title>
 
-  <!-- Google Font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5e6ff;
-      text-align: center;
-      padding: 20px;
-    }
+<style>
+  body, td, th, textarea, button, select {
+    transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease, box-shadow 0.3s ease;
+  }
 
-    h1 {
-      margin-bottom: 10px;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
 
-    select {
-      padding: 6px;
-      font-size: 14px;
-      margin: 5px;
-    }
+  h1 { margin-bottom: 12px; }
 
-    table {
-      border-collapse: collapse;
-      width: 95%;
-      margin: auto;
-    }
+  select, button {
+    padding: 6px 10px;
+    font-size: 14px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
 
-    th {
-      background-color: #ffccd9;
-      font-family: 'Great Vibes', cursive;
-      font-size: 20px;
-      padding: 8px;
-    }
+  table {
+    border-collapse: collapse;
+    width: 95%;
+    margin: auto;
+  }
 
-    td {
-      border: 1px solid #999;
-      background-color: #b3e0ff;
-      vertical-align: top;
-      height: 120px;
-      padding: 4px;
-    }
+  th {
+    font-family: 'Great Vibes', cursive;
+    font-size: 20px;
+    padding: 8px;
+  }
 
-    .date {
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
+  td {
+    border: 1px solid;
+    vertical-align: top;
+    height: 120px;
+    padding: 6px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
 
-    textarea {
-      width: 95%;
-      height: 70px;
-      font-size: 13px;
-      border: 2px solid #b3e0ff;
-      border-radius: 5px;
-      resize: vertical;
-      background-color: white;
-    }
-  </style>
+  .date { font-weight: bold; margin-bottom: 4px; }
+
+  textarea {
+    width: 95%;
+    height: 70px;
+    font-size: 13px;
+    border-radius: 8px;
+    resize: vertical;
+  }
+
+  /* TODAY highlight */
+  .today {
+    background-color: #fff6cc !important;
+    border: 2px solid #ffd966;
+    box-shadow: 0 0 14px rgba(255, 217, 102, 0.8);
+    animation: glow 2s infinite alternate;
+  }
+
+  @keyframes glow {
+    from { box-shadow: 0 0 6px rgba(255,217,102,0.5); }
+    to { box-shadow: 0 0 14px rgba(255,217,102,0.9); }
+  }
+
+  /* LIGHT/DARK THEMES */
+  body.light.lavender { background:#f5e6ff; color:#333; }
+  body.light.pink     { background:#ffe6f0; color:#333; }
+  body.light.blue     { background:#e6f3ff; color:#333; }
+  body.light.green    { background:#e9f7ef; color:#333; }
+
+  body.dark.lavender { background:#2e294e; color:#f3eaff; }
+  body.dark.pink     { background:#4a2c3d; color:#ffeaf3; }
+  body.dark.blue     { background:#243447; color:#e6f3ff; }
+  body.dark.green    { background:#1f3d2b; color:#e9f7ef; }
+
+  body.light td { background:#b3e0ff; border-color:#999; }
+  body.dark td  { background:#4b3f72; border-color:#7a6fc2; }
+
+  body.light th { background:#ffccd9; }
+  body.dark th  { background:#6c63a6; color:white; }
+
+  body.light textarea { background:white; color:black; }
+  body.dark textarea  { background:#3d355f; color:white; }
+
+  button { background:#fff6cc; }
+
+  .controls { margin-bottom: 10px; }
+</style>
 </head>
 
-<body>
+<body class="light lavender">
 
 <h1>My Fun Calendar</h1>
 
+<div class="controls">
+  <select id="palette">
+    <option value="lavender">💜 Lavender</option>
+    <option value="pink">🌸 Pink</option>
+    <option value="blue">🌊 Blue</option>
+    <option value="green">🍃 Green</option>
+  </select>
+  <button id="themeToggle">🌙 Toggle Dark</button>
+</div>
+
 <select id="month"></select>
-<select id="year"></select>
+<select id="year" size="1"></select>
+<button id="goToday">Go to Today</button>
 
 <br><br>
 
 <table>
   <thead>
     <tr>
-      <th>Sun</th>
-      <th>Mon</th>
-      <th>Tue</th>
-      <th>Wed</th>
-      <th>Thu</th>
-      <th>Fri</th>
-      <th>Sat</th>
+      <th>Sun</th><th>Mon</th><th>Tue</th>
+      <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
     </tr>
   </thead>
   <tbody id="calendar"></tbody>
 </table>
 
 <script>
-  const monthSelect = document.getElementById("month");
-  const yearSelect = document.getElementById("year");
-  const calendar = document.getElementById("calendar");
+const body = document.body;
+const paletteSelect = document.getElementById("palette");
+const themeBtn = document.getElementById("themeToggle");
+const calendar = document.getElementById("calendar");
+const monthSelect = document.getElementById("month");
+const yearSelect = document.getElementById("year");
+const goTodayBtn = document.getElementById("goToday");
 
-  const months = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December"
-  ];
+const today = new Date();
+const months = [
+  "January ❄️","February ⛄","March 🌸","April 🌼","May 🌞","June 🌻",
+  "July ☀️","August 🌊","September 🍎","October 🍁","November 🍂","December 🎄"
+];
+months.forEach((m,i)=>monthSelect.add(new Option(m,i)));
 
-  // Populate month & year dropdowns
-  months.forEach((m, i) => {
-    const option = document.createElement("option");
-    option.value = i;
-    option.textContent = m;
-    monthSelect.appendChild(option);
-  });
+// Years 2000 → 2035
+for(let y=2000;y<=2035;y++) yearSelect.add(new Option(y,y));
+monthSelect.value = today.getMonth();
+yearSelect.value = today.getFullYear();
 
-  for (let y = 2020; y <= 2035; y++) {
-    const option = document.createElement("option");
-    option.value = y;
-    option.textContent = y;
-    yearSelect.appendChild(option);
-  }
+function applyTheme(){
+  body.className = `${localStorage.mode||"light"} ${localStorage.palette||"lavender"}`;
+  paletteSelect.value = localStorage.palette || "lavender";
+}
 
-  const today = new Date();
-  monthSelect.value = today.getMonth();
-  yearSelect.value = today.getFullYear();
+paletteSelect.onchange = () => {
+  localStorage.palette = paletteSelect.value;
+  applyTheme();
+}
 
-  function buildCalendar() {
-    calendar.innerHTML = "";
-    const month = monthSelect.value;
-    const year = yearSelect.value;
+themeBtn.onclick = () => {
+  localStorage.mode = localStorage.mode==="dark"?"light":"dark";
+  applyTheme();
+}
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, Number(month) + 1, 0).getDate();
+function buildCalendar(){
+  calendar.innerHTML="";
+  const m=+monthSelect.value, y=+yearSelect.value;
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  let row=document.createElement("tr"), count=0;
 
-    let row = document.createElement("tr");
-    let cellCount = 0;
+  for(let i=0;i<first;i++){ row.appendChild(document.createElement("td")); count++; }
 
-    // Empty cells before first day
-    for (let i = 0; i < firstDay; i++) {
-      row.appendChild(document.createElement("td"));
-      cellCount++;
-    }
+  for(let d=1;d<=days;d++){
+    if(count===7){ calendar.appendChild(row); row=document.createElement("tr"); count=0; }
+    const cell=document.createElement("td");
+    if(d===today.getDate() && m===today.getMonth() && y===today.getFullYear()) cell.classList.add("today");
 
-    for (let day = 1; day <= daysInMonth; day++) {
-      if (cellCount === 7) {
-        calendar.appendChild(row);
-        row = document.createElement("tr");
-        cellCount = 0;
+    const dateLabel=document.createElement("div");
+    dateLabel.className="date";
+    dateLabel.textContent=d;
+
+    const textarea=document.createElement("textarea");
+    const key=`${y}-${m}-${d}`;
+    textarea.value=localStorage[key]||"";
+    textarea.oninput=e=>localStorage[key]=e.target.value;
+
+    // Only expand textarea on phones; no lift effect
+    cell.onclick=()=>{
+      if(window.innerWidth<=600){
+        textarea.style.height = textarea.style.height==="100px" ? "50px" : "100px";
       }
-
-      const cell = document.createElement("td");
-      const dateKey = `${year}-${month}-${day}`;
-
-      const dateLabel = document.createElement("div");
-      dateLabel.className = "date";
-      dateLabel.textContent = day;
-
-      const textarea = document.createElement("textarea");
-      textarea.value = localStorage.getItem(dateKey) || "";
-
-      textarea.addEventListener("input", () => {
-        localStorage.setItem(dateKey, textarea.value);
-      });
-
-      cell.appendChild(dateLabel);
-      cell.appendChild(textarea);
-      row.appendChild(cell);
-      cellCount++;
     }
 
-    while (cellCount < 7) {
-      row.appendChild(document.createElement("td"));
-      cellCount++;
-    }
-
-    calendar.appendChild(row);
+    cell.appendChild(dateLabel);
+    cell.appendChild(textarea);
+    row.appendChild(cell); count++;
   }
 
-  monthSelect.addEventListener("change", buildCalendar);
-  yearSelect.addEventListener("change", buildCalendar);
+  while(count<7){ row.appendChild(document.createElement("td")); count++; }
+  calendar.appendChild(row);
+}
 
-  buildCalendar();
+monthSelect.onchange=yearSelect.onchange=buildCalendar;
+goTodayBtn.onclick=()=>{ monthSelect.value=today.getMonth(); yearSelect.value=today.getFullYear(); buildCalendar(); };
+
+applyTheme();
+buildCalendar();
 </script>
 
 </body>
 </html>
-
