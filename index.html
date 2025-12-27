@@ -1,216 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
 <title>My Fun Calendar</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 
 <style>
-  body, td, th, textarea, button, select {
-    transition: background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease, box-shadow 0.3s ease;
-  }
+:root{
+  --bg-light:#f5e6ff;
+  --cell-light:#b3e0ff;
+  --bg-dark:#2e294e;
+  --cell-dark:#4b3f72;
 
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
+  --bg:var(--bg-light);
+  --cell:var(--cell-light);
+  --today:#fff6b0;
+}
 
-  h1 { margin-bottom: 12px; }
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:var(--bg);
+  transition:background 0.6s ease, color 0.6s ease;
+  text-align:center;
+}
 
-  select, button {
-    padding: 6px 10px;
-    font-size: 14px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-  }
+body.dark{
+  color:#eee;
+}
 
-  table {
-    border-collapse: collapse;
-    width: 95%;
-    margin: auto;
-  }
+h1{
+  font-family:'Playfair Display', serif;
+  margin:20px 0;
+}
 
-  th {
-    font-family: 'Great Vibes', cursive;
-    font-size: 20px;
-    padding: 8px;
-  }
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:10px;
+  align-items:center;
+}
 
-  td {
-    border: 1px solid;
-    vertical-align: top;
-    height: 120px;
-    padding: 6px;
-    border-radius: 12px;
-    cursor: pointer;
-  }
+select,button{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid #aaa;
+  cursor:pointer;
+}
 
-  .date { font-weight: bold; margin-bottom: 4px; }
+#customPanel{
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height 0.6s ease, opacity 0.6s ease;
+}
 
-  textarea {
-    width: 95%;
-    height: 70px;
-    font-size: 13px;
-    border-radius: 8px;
-    resize: vertical;
-  }
+#customPanel.open{
+  max-height:200px;
+  opacity:1;
+}
 
-  /* TODAY highlight */
-  .today {
-    background-color: #fff6cc !important;
-    border: 2px solid #ffd966;
-    box-shadow: 0 0 14px rgba(255, 217, 102, 0.8);
-    animation: glow 2s infinite alternate;
-  }
+table{
+  width:90%;
+  margin:auto;
+  border-collapse:collapse;
+}
 
-  @keyframes glow {
-    from { box-shadow: 0 0 6px rgba(255,217,102,0.5); }
-    to { box-shadow: 0 0 14px rgba(255,217,102,0.9); }
-  }
+th{
+  padding:10px;
+  background:#ffccd9;
+}
 
-  /* LIGHT/DARK THEMES */
-  body.light.lavender { background:#f5e6ff; color:#333; }
-  body.light.pink     { background:#ffe6f0; color:#333; }
-  body.light.blue     { background:#e6f3ff; color:#333; }
-  body.light.green    { background:#e9f7ef; color:#333; }
+td{
+  border:1px solid #999;
+  height:120px;
+  background:var(--cell);
+  vertical-align:top;
+  transition:background 0.6s ease;
+}
 
-  body.dark.lavender { background:#2e294e; color:#f3eaff; }
-  body.dark.pink     { background:#4a2c3d; color:#ffeaf3; }
-  body.dark.blue     { background:#243447; color:#e6f3ff; }
-  body.dark.green    { background:#1f3d2b; color:#e9f7ef; }
+.day-number{
+  font-size:14px;
+  font-weight:bold;
+  padding:4px;
+  opacity:0.7;
+  text-align:left;
+  pointer-events:none;
+}
 
-  body.light td { background:#b3e0ff; border-color:#999; }
-  body.dark td  { background:#4b3f72; border-color:#7a6fc2; }
+/* ✅ WHITE TYPING BOXES */
+textarea{
+  width:95%;
+  height:85px;
+  resize:none;
+  background:#ffffff;
+  border-radius:6px;
+  border:1px solid rgba(0,0,0,0.15);
+  padding:4px;
+  font-family:Arial, sans-serif;
+  transition:background 0.4s ease, color 0.4s ease;
+}
 
-  body.light th { background:#ffccd9; }
-  body.dark th  { background:#6c63a6; color:white; }
+/* 🌙 DARK MODE TEXTAREAS */
+body.dark textarea{
+  background:#1e1e1e;
+  color:#eee;
+  border:1px solid rgba(255,255,255,0.25);
+}
 
-  body.light textarea { background:white; color:black; }
-  body.dark textarea  { background:#3d355f; color:white; }
+.today{
+  background:var(--today) !important;
+  animation:pulse 1.5s ease-in-out 2;
+}
 
-  button { background:#fff6cc; }
-
-  .controls { margin-bottom: 10px; }
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,230,120,0.8);}
+  100%{box-shadow:0 0 0 15px rgba(255,230,120,0);}
+}
 </style>
 </head>
 
-<body class="light lavender">
+<body>
 
 <h1>My Fun Calendar</h1>
 
 <div class="controls">
-  <select id="palette">
-    <option value="lavender">💜 Lavender</option>
-    <option value="pink">🌸 Pink</option>
-    <option value="blue">🌊 Blue</option>
-    <option value="green">🍃 Green</option>
-  </select>
-  <button id="themeToggle">🌙 Toggle Dark</button>
+  <select id="month"></select>
+  <select id="year"></select>
+  <button id="todayBtn">Go to today</button>
+  <button id="arrowBtn">🎨</button>
 </div>
 
-<select id="month"></select>
-<select id="year" size="1"></select>
-<button id="goToday">Go to Today</button>
+<div id="customPanel">
+  <select id="palette">
+    <option value="lavender">Lavender</option>
+    <option value="pink">Pink</option>
+    <option value="blue">Blue</option>
+    <option value="green">Green</option>
+  </select>
+  <button id="themeBtn">🌙 Dark</button>
+</div>
 
-<br><br>
-
-<table>
-  <thead>
-    <tr>
-      <th>Sun</th><th>Mon</th><th>Tue</th>
-      <th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
-    </tr>
-  </thead>
-  <tbody id="calendar"></tbody>
-</table>
+<table id="calendar"></table>
 
 <script>
-const body = document.body;
-const paletteSelect = document.getElementById("palette");
-const themeBtn = document.getElementById("themeToggle");
-const calendar = document.getElementById("calendar");
-const monthSelect = document.getElementById("month");
-const yearSelect = document.getElementById("year");
-const goTodayBtn = document.getElementById("goToday");
+const monthSel=document.getElementById("month");
+const yearSel=document.getElementById("year");
+const cal=document.getElementById("calendar");
+const todayBtn=document.getElementById("todayBtn");
+const paletteSel=document.getElementById("palette");
+const themeBtn=document.getElementById("themeBtn");
+const arrowBtn=document.getElementById("arrowBtn");
+const panel=document.getElementById("customPanel");
 
-const today = new Date();
-const months = [
-  "January ❄️","February ⛄","March 🌸","April 🌼","May 🌞","June 🌻",
-  "July ☀️","August 🌊","September 🍎","October 🍁","November 🍂","December 🎄"
-];
-months.forEach((m,i)=>monthSelect.add(new Option(m,i)));
+const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-// Years 2000 → 2035
-for(let y=2000;y<=2035;y++) yearSelect.add(new Option(y,y));
-monthSelect.value = today.getMonth();
-yearSelect.value = today.getFullYear();
+months.forEach((m,i)=>monthSel.innerHTML+=`<option value="${i}">${m}</option>`);
+for(let y=2000;y<=2035;y++)yearSel.innerHTML+=`<option>${y}</option>`;
 
-function applyTheme(){
-  body.className = `${localStorage.mode||"light"} ${localStorage.palette||"lavender"}`;
-  paletteSelect.value = localStorage.palette || "lavender";
+const now=new Date();
+monthSel.value=now.getMonth();
+yearSel.value=now.getFullYear();
+
+function setPalette(lb,lc,db,dc){
+  document.documentElement.style.setProperty('--bg-light',lb);
+  document.documentElement.style.setProperty('--cell-light',lc);
+  document.documentElement.style.setProperty('--bg-dark',db);
+  document.documentElement.style.setProperty('--cell-dark',dc);
+  applyMode();
 }
 
-paletteSelect.onchange = () => {
-  localStorage.palette = paletteSelect.value;
-  applyTheme();
+function applyMode(){
+  const dark=document.body.classList.contains("dark");
+  document.documentElement.style.setProperty('--bg',dark?'var(--bg-dark)':'var(--bg-light)');
+  document.documentElement.style.setProperty('--cell',dark?'var(--cell-dark)':'var(--cell-light)');
 }
 
-themeBtn.onclick = () => {
-  localStorage.mode = localStorage.mode==="dark"?"light":"dark";
-  applyTheme();
-}
+paletteSel.onchange=()=>{
+  if(paletteSel.value==="lavender") setPalette("#f5e6ff","#b3e0ff","#2e294e","#4b3f72");
+  if(paletteSel.value==="pink") setPalette("#ffe6f0","#ffb3d1","#3a1f2b","#6b3b4d");
+  if(paletteSel.value==="blue") setPalette("#e6f3ff","#b3dfff","#1e2a3a","#3b5b7a");
+  if(paletteSel.value==="green") setPalette("#e9f7ef","#b3e0c0","#1f332a","#3f6654");
+};
 
-function buildCalendar(){
-  calendar.innerHTML="";
-  const m=+monthSelect.value, y=+yearSelect.value;
-  const first=new Date(y,m,1).getDay();
-  const days=new Date(y,m+1,0).getDate();
-  let row=document.createElement("tr"), count=0;
+themeBtn.onclick=()=>{
+  document.body.classList.toggle("dark");
+  applyMode();
+  themeBtn.textContent=document.body.classList.contains("dark")?"☀️ Light":"🌙 Dark";
+};
 
-  for(let i=0;i<first;i++){ row.appendChild(document.createElement("td")); count++; }
+arrowBtn.onclick=()=>panel.classList.toggle("open");
 
-  for(let d=1;d<=days;d++){
-    if(count===7){ calendar.appendChild(row); row=document.createElement("tr"); count=0; }
-    const cell=document.createElement("td");
-    if(d===today.getDate() && m===today.getMonth() && y===today.getFullYear()) cell.classList.add("today");
+function drawCalendar(){
+  cal.innerHTML="";
 
-    const dateLabel=document.createElement("div");
-    dateLabel.className="date";
-    dateLabel.textContent=d;
+  const header=document.createElement("tr");
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{
+    const th=document.createElement("th");
+    th.textContent=d;
+    header.appendChild(th);
+  });
+  cal.appendChild(header);
 
-    const textarea=document.createElement("textarea");
-    const key=`${y}-${m}-${d}`;
-    textarea.value=localStorage[key]||"";
-    textarea.oninput=e=>localStorage[key]=e.target.value;
+  const first=new Date(yearSel.value,monthSel.value,1);
+  const start=first.getDay();
+  const totalDays=new Date(yearSel.value,Number(monthSel.value)+1,0).getDate();
 
-    // Only expand textarea on phones; no lift effect
-    cell.onclick=()=>{
-      if(window.innerWidth<=600){
-        textarea.style.height = textarea.style.height==="100px" ? "50px" : "100px";
-      }
+  let row=document.createElement("tr");
+  for(let i=0;i<start;i++) row.appendChild(document.createElement("td"));
+
+  for(let day=1;day<=totalDays;day++){
+    const td=document.createElement("td");
+
+    const num=document.createElement("div");
+    num.className="day-number";
+    num.textContent=day;
+
+    const ta=document.createElement("textarea");
+
+    td.appendChild(num);
+    td.appendChild(ta);
+
+    if(day===now.getDate() &&
+       monthSel.value==now.getMonth() &&
+       yearSel.value==now.getFullYear()){
+      td.classList.add("today");
+      setTimeout(()=>td.scrollIntoView({behavior:"smooth",block:"center"}),300);
     }
 
-    cell.appendChild(dateLabel);
-    cell.appendChild(textarea);
-    row.appendChild(cell); count++;
+    row.appendChild(td);
+    if((start+day)%7===0){
+      cal.appendChild(row);
+      row=document.createElement("tr");
+    }
   }
-
-  while(count<7){ row.appendChild(document.createElement("td")); count++; }
-  calendar.appendChild(row);
+  cal.appendChild(row);
 }
 
-monthSelect.onchange=yearSelect.onchange=buildCalendar;
-goTodayBtn.onclick=()=>{ monthSelect.value=today.getMonth(); yearSelect.value=today.getFullYear(); buildCalendar(); };
+monthSel.onchange=drawCalendar;
+yearSel.onchange=drawCalendar;
+todayBtn.onclick=()=>{
+  monthSel.value=now.getMonth();
+  yearSel.value=now.getFullYear();
+  drawCalendar();
+};
 
-applyTheme();
-buildCalendar();
+drawCalendar();
 </script>
 
 </body>
