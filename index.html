@@ -26,9 +26,7 @@ body{
   text-align:center;
 }
 
-body.dark{
-  color:#eee;
-}
+body.dark{ color:#eee; }
 
 h1{
   font-family:'Playfair Display', serif;
@@ -90,7 +88,6 @@ td{
   pointer-events:none;
 }
 
-/* ✅ WHITE TYPING BOXES */
 textarea{
   width:95%;
   height:85px;
@@ -103,7 +100,6 @@ textarea{
   transition:background 0.4s ease, color 0.4s ease;
 }
 
-/* 🌙 DARK MODE TEXTAREAS */
 body.dark textarea{
   background:#1e1e1e;
   color:#eee;
@@ -164,6 +160,7 @@ const now=new Date();
 monthSel.value=now.getMonth();
 yearSel.value=now.getFullYear();
 
+/* ---------- THEME ---------- */
 function setPalette(lb,lc,db,dc){
   document.documentElement.style.setProperty('--bg-light',lb);
   document.documentElement.style.setProperty('--cell-light',lc);
@@ -193,6 +190,11 @@ themeBtn.onclick=()=>{
 
 arrowBtn.onclick=()=>panel.classList.toggle("open");
 
+/* ---------- CALENDAR + SAVE ---------- */
+function storageKey(y,m,d){
+  return `calendar-${y}-${m}-${d}`;
+}
+
 function drawCalendar(){
   cal.innerHTML="";
 
@@ -219,6 +221,12 @@ function drawCalendar(){
     num.textContent=day;
 
     const ta=document.createElement("textarea");
+    const key=storageKey(yearSel.value,monthSel.value,day);
+    ta.value=localStorage.getItem(key) || "";
+
+    ta.addEventListener("input",()=>{
+      localStorage.setItem(key, ta.value);
+    });
 
     td.appendChild(num);
     td.appendChild(ta);
